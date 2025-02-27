@@ -9,6 +9,7 @@ function App() {
   const [lives, setLives] = useState(3);
   const ended = useMemo(() => lives === 0 || currentQuestionIndex === gameFlow.length, [lives, currentQuestionIndex, gameFlow]);
   const cardRef = useRef(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   function answerCurrentQuestion(id){
     if (ended)
@@ -17,6 +18,9 @@ function App() {
     let el = document.getElementById('komunat').querySelectorAll('path')[id];
 
     if (id === gameFlow[currentQuestionIndex]){
+      if (currentQuestionIndex === gameFlow.length - 1){
+        document.querySelector('svg').classList.add('green');
+      }
       correctAnswerAnimation();
 
       setScore(score => score + 1);
@@ -26,15 +30,26 @@ function App() {
       el.classList.add('active');
     }
     else{
+      if(lives === 1){
+        document.getElementById('komunat').querySelectorAll('path')[gameFlow[currentQuestionIndex]].classList.add('red');
+        document.querySelector('svg').classList.add('red');
+      }
       wrongAnswerAnimation();
       setLives(prev => prev - 1);
     }
   }
 
   function initGame(){
+    if (!ended){
+      return;
+    }
+
     Array.from(document.getElementById('komunat').querySelectorAll('path')).forEach((k, i) => {
       k.classList.remove('active');
+      k.classList.remove('red');
     });
+    document.querySelector('svg').classList.remove('red');
+    document.querySelector('svg').classList.remove('green');
     setLives(3);
     setScore(0);
     setCurrentQuestionIndex(0);
@@ -42,17 +57,11 @@ function App() {
   }
 
   function wrongAnswerAnimation(){
-    cardRef.current.classList.add('bg-red-500');
-    setTimeout(() => {
-      cardRef.current.classList.remove('bg-red-500');
-    }, 400);
+    
   }
 
   function correctAnswerAnimation(){
-    cardRef.current.classList.add('bg-green-400');
-    setTimeout(() => {
-      cardRef.current.classList.remove('bg-green-400');
-    }, 400);
+    
   }
 
   function initGameFlow(){
@@ -77,6 +86,22 @@ function App() {
     return indices;
   }
 
+  function zoomIn(){
+    if (zoomLevel < 3){
+      setZoomLevel(prev => prev + 1);
+    }
+  }
+
+  function zoomOut(){
+    if (zoomLevel > 1){
+      setZoomLevel(prev => prev - 1)
+    }
+  }
+
+  useEffect(() => {
+    document.querySelector('svg').style.scale = zoomLevel;
+  }, [zoomLevel]);
+
   useEffect(() => {
     let komunatContainer = document.getElementById('komunat');
 
@@ -84,18 +109,24 @@ function App() {
       k.onclick = () => answerCurrentQuestion(i);
     });
 
+    document.getElementById('zoom-in').addEventListener('click', zoomIn)
+    document.getElementById('zoom-out').addEventListener('click', zoomOut)
+
     return () => {
       Array.from(komunatContainer.querySelectorAll('path')).forEach((k, i) => {
         k.onclick = null;
       });
+
+      document.getElementById('zoom-in').removeEventListener('click', zoomIn)
+      document.getElementById('zoom-out').removeEventListener('click', zoomOut)
     }
   });
 
   return (
-      <div ref={cardRef} className='flex items-center justify-center h-full lg:max-h-48 rounded-md text-white relative bg-blue-400 transition-colors'>
-        <div className='text-3xl font-light'>{ended? <button onClick={initGame}>Qëlluat {score} nga {gameFlow.length} komuna</button> : komunat[gameFlow[currentQuestionIndex]]}</div>
+      <div onClick={initGame} ref={cardRef} className={`select-none flex items-center justify-center min-h-32 lg:max-h-48 rounded-md text-white relative bg-blue-400 transition-colors ${ended? 'cursor-pointer' : 'cursor-auto'} ${ended? currentQuestionIndex === gameFlow.length? 'bg-green-400' : 'bg-red-400' : ''}`}>
+        <div className='text-3xl font-light'>{ended? `Qëlluat ${score} nga ${gameFlow.length} komuna` : komunat[gameFlow[currentQuestionIndex]]}</div>
         {!ended && <div className={`absolute top-2 right-2 font-light text-lg select-none`}>{score}/{gameFlow.length}</div>}
-        {!ended && <div className='absolute top-2 left-2 font-light text-2xl tracking-widest select-none'>{Array.from({length: lives}).fill('💛').join('')}</div>}
+        {!ended && <div className='absolute top-2 left-2 font-light text-2xl tracking-widest select-none animate-pulse-scale'>{Array.from({length: lives}).fill('💛')}</div>}
       </div>
   );
 }

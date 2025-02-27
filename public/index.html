@@ -26,15 +26,22 @@
     -->
     <title>Kosova Kuiz</title>
   </head>
-  <body class="flex flex-col items-center gap-8 p-4 overflow-hidden h-screen lg:flex-row">
+  <body class="flex flex-col gap-8 lg:items-center justify-center lg:justify-normal p-4 overflow-hidden h-dvh lg:flex-row select-none">
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <svg
+    <div class="flex-grow lg:flex-grow-0 relative">
+      <div class="absolute bottom-0 right-0 flex flex-row-reverse gap-2 z-10 pr-2 pb-2 pt-4 pl-4 pointer-events-auto">
+        <span id="zoom-in" class="text-4xl font-bold text-gray-500 select-none">+</span>
+        <span id="zoom-out" class="text-4xl font-bold text-gray-500 select-none">-</span>
+      </div>
+      <div class="grid place-content-center overflow-scroll h-full">
+          <svg
+          ontouchstart=""
     xmlns="http://www.w3.org/2000/svg"
     id="map"
     version="1.1"
     viewBox="0 0 160.60848 173.29747"
-    style="clip-rule:evenodd;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
-    class="w-full max-w-xl max-h-full p-4"
+    style="clip-rule:evenodd;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision;user-select: all;"
+    class="w-screen p-4 max-w-md max-h-full md:max-w-lg lg:max-w-xl origin-top-left"
     xml:space="preserve">
  <g
     transform="translate(-1129.567,9.9645082)"
@@ -286,7 +293,9 @@
    </g></g>
    
    </svg>
-    <div id="root" class="self-stretch flex-grow flex flex-col justify-center"></div>
+  </div>
+    </div>
+    <div id="root" class="lg:flex-grow self-stretch flex flex-col justify-center"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
