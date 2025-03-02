@@ -12,32 +12,37 @@ function App() {
   const [zoomLevel, setZoomLevel] = useState(1);
 
   function answerCurrentQuestion(id){
-    if (ended)
+    if (ended || gameFlow.slice(0, currentQuestionIndex).includes(id))
       return;
 
-    let el = document.getElementById('komunat').querySelectorAll('path')[id];
-
     if (id === gameFlow[currentQuestionIndex]){
-      if (currentQuestionIndex === gameFlow.length - 1){
-        document.querySelector('svg').classList.add('green');
-      }
       correctAnswerAnimation();
 
       setScore(score => score + 1);
       setCurrentQuestionIndex(q => q + 1);
       setLives(3);
-
-      el.classList.add('active');
     }
     else{
-      if(lives === 1){
-        document.getElementById('komunat').querySelectorAll('path')[gameFlow[currentQuestionIndex]].classList.add('red');
-        document.querySelector('svg').classList.add('red');
-      }
       wrongAnswerAnimation();
       setLives(prev => prev - 1);
     }
   }
+
+  useEffect(() => {
+    if (currentQuestionIndex > 0){
+      let el = document.getElementById('komunat').querySelectorAll('path')[gameFlow[currentQuestionIndex - 1]];
+      el.classList.add('active');
+    }
+
+    if (currentQuestionIndex === gameFlow.length){
+      document.querySelector('svg').classList.add('green');
+    }
+
+    if (lives === 0){
+      document.getElementById('komunat').querySelectorAll('path')[gameFlow[currentQuestionIndex]].classList.add('red');
+      document.querySelector('svg').classList.add('red');
+    }
+  }, [lives, currentQuestionIndex]);
 
   function initGame(){
     if (!ended){
@@ -52,8 +57,8 @@ function App() {
     document.querySelector('svg').classList.remove('green');
     setLives(3);
     setScore(0);
+    setGameFlow(initGameFlow(gameFlow[currentQuestionIndex]));
     setCurrentQuestionIndex(0);
-    setGameFlow(initGameFlow());
   }
 
   function wrongAnswerAnimation(){
@@ -64,7 +69,7 @@ function App() {
     
   }
 
-  function initGameFlow(){
+  function initGameFlow(lastIndex){
     let indices = [];
     const ignoreIndices = [];
 
@@ -81,6 +86,14 @@ function App() {
       let temp = indices[i];
       indices[i] = indices[j];
       indices[j] = temp;
+    }
+
+    if (lastIndex !== undefined){
+      let i = indices.indexOf(lastIndex);
+
+      let temp = indices[0];
+      indices[0] = lastIndex;
+      indices[i] = temp;
     }
 
     return indices;
@@ -107,6 +120,14 @@ function App() {
 
     Array.from(komunatContainer.querySelectorAll('path')).forEach((k, i) => {
       k.onclick = () => answerCurrentQuestion(i);
+
+      k.onmouseenter = k.ontouchstart = () => {
+        k.classList.add('hover');
+      }
+
+      k.onmouseleave = k.ontouchend = () => {
+        k.classList.remove('hover');
+      }
     });
 
     document.getElementById('zoom-in').addEventListener('click', zoomIn)
@@ -115,6 +136,7 @@ function App() {
     return () => {
       Array.from(komunatContainer.querySelectorAll('path')).forEach((k, i) => {
         k.onclick = null;
+        k.onmouseenter = k.ontouchstart = k.onmouseleave = k.ontouchend = null;
       });
 
       document.getElementById('zoom-in').removeEventListener('click', zoomIn)
@@ -123,7 +145,7 @@ function App() {
   });
 
   return (
-      <div onClick={initGame} ref={cardRef} className={`select-none flex items-center justify-center min-h-32 lg:max-h-48 rounded-md text-white relative bg-blue-400 transition-colors ${ended? 'cursor-pointer' : 'cursor-auto'} ${ended? currentQuestionIndex === gameFlow.length? 'bg-green-400' : 'bg-red-400' : ''}`}>
+      <div onClick={initGame} ref={cardRef} className={`select-none flex items-center justify-center min-h-32 min-w-full lg:min-w-[50vw] lg:max-w-[50vw] rounded-md text-white relative bg-blue-400 transition-colors ${ended? 'cursor-pointer' : 'cursor-auto'} ${ended? currentQuestionIndex === gameFlow.length? 'bg-green-400' : 'bg-red-400' : ''}`}>
         <div className='text-3xl font-light'>{ended? `Qëlluat ${score} nga ${gameFlow.length} komuna` : komunat[gameFlow[currentQuestionIndex]]}</div>
         {!ended && <div className={`absolute top-2 right-2 font-light text-lg select-none`}>{score}/{gameFlow.length}</div>}
         {!ended && <div className='absolute top-2 left-2 font-light text-2xl tracking-widest select-none animate-pulse-scale'>{Array.from({length: lives}).fill('💛')}</div>}

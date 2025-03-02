@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+ /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+}
+}
+
 *{
   box-sizing: border-box;
 }
@@ -25,20 +37,14 @@ svg{
 
 #komunat path{
   fill: theme('colors.blue.50');
-  transition: fill .2s ease;
+  transition: fill .1s ease;
 }
 
 svg.red #komunat path:not(.active) {
   fill: theme('colors.red.50');
 }
 
-@media(hover:hover){
-  #komunat path:hover{
-    fill: theme('colors.blue.300');
-  }
-}
-
-#komunat path:active{
+#komunat path.hover{
   fill: theme('colors.blue.300');
 }
 
@@ -50,7 +56,11 @@ svg.red #komunat path:not(.active) {
 
 svg.green #komunat path.active{
   fill: theme('colors.green.400');
+}
+
+svg.green .borders, svg.green .main-border{
   stroke: theme('colors.green.400') !important;
+  stroke-width: 1px !important;
 }
 
 #komunat path.red{
@@ -70,3 +80,4 @@ svg.red .borders, svg.red .main-border{
   stroke: rgb(204, 254, 206);
   stroke-width: 1px !important;
 }
+
