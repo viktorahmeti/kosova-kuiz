@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/kosova-kuiz/static/css/main.53a91edc.css",
-    "main.js": "/kosova-kuiz/static/js/main.4651c936.js",
+    "main.css": "/kosova-kuiz/static/css/main.f55e03b5.css",
+    "main.js": "/kosova-kuiz/static/js/main.75911a75.js",
     "index.html": "/kosova-kuiz/index.html",
-    "main.53a91edc.css.map": "/kosova-kuiz/static/css/main.53a91edc.css.map",
-    "main.4651c936.js.map": "/kosova-kuiz/static/js/main.4651c936.js.map"
+    "main.f55e03b5.css.map": "/kosova-kuiz/static/css/main.f55e03b5.css.map",
+    "main.75911a75.js.map": "/kosova-kuiz/static/js/main.75911a75.js.map"
   },
   "entrypoints": [
-    "static/css/main.53a91edc.css",
-    "static/js/main.4651c936.js"
+    "static/css/main.f55e03b5.css",
+    "static/js/main.75911a75.js"
   ]
 }
